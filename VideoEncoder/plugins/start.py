@@ -25,9 +25,8 @@ async def start_message(app, message):
     check = await check_user(message)
     if check is None:
         return
-    else:
-        pass
-    text = f"Hey! I'm <a href='https://telegra.ph/file/11379aba315ba245ebc7b.jpg'>VideoEncoder</a>. I can encode telegram files in x264.\n\nPress /help for my commands :)"
+    text = "Hey! I'm <a href='https://telegra.ph/file/11379aba315ba245ebc7b.jpg'>VideoEncoder</a>. I can encode telegram files in x264.\n\nPress /help for my commands :)"
+
     await message.reply(text=text, reply_markup=start)
 
 
@@ -36,15 +35,8 @@ async def help_message(app, message):
     check = await check_user(message)
     if check is None:
         return
-    else:
-        pass
-    text = f"""<b>Commands:</b>
-• AutoDetect Telegram Files.
-• /help - Commands List.
-• /start - Introduction.
-• /sthumb - Save Thumb
-• /dthumb - Clear Thumb.
-• /logs - check logs."""
+    text = '<b>Commands:</b>\x1f• AutoDetect Telegram Files.\x1f• /help - Commands List.\x1f• /start - Introduction.\x1f• /sthumb - Save Thumb\x1f• /dthumb - Clear Thumb.\x1f• /logs - check logs.'
+
     await message.reply(text=text, reply_markup=output)
 
 
@@ -53,8 +45,6 @@ async def logs(app, message):
     check = await check_user(message)
     if check is None:
         return
-    else:
-        pass
     file = 'VideoEncoder/utils/logs.txt'
     await message.reply_document(
         file,

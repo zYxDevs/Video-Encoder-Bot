@@ -66,16 +66,11 @@ async def handle_upload(new_file, message, msg):
     filename = os.path.basename(new_file)
     duration = get_duration(new_file)
     thumb = os.path.join(str(user_id), 'thumbnail.jpg')
-    height = 720
-    width = 1280
     if not os.path.isfile(thumb):
         thumb = get_thumbnail(new_file, download_dir, duration / 4)
     # Upload File
     if upload_doc is True:
-        if doc_thumb:
-            thumb = thumb
-        else:
-            thumb = None
+        thumb = thumb if doc_thumb else None
         await message.reply_document(
             new_file,
             thumb=thumb,
@@ -86,6 +81,8 @@ async def handle_upload(new_file, message, msg):
             progress_args=("Uploading ...", msg, c_time)
         )
     else:
+        height = 720
+        width = 1280
         await message.reply_video(
             new_file,
             supports_streaming=True,
