@@ -53,27 +53,23 @@ async def encode(filepath):
     crf = '-crf 28'
 
     # Preset
-    if p == 'uf':
-        preset = '-preset ultrafast'
-    elif p == 'sf':
-        preset = '-preset superfast'
-    elif p == 'vf':
-        preset = '-preset veryfast'
-    elif p == 'f':
+    if p == 'f':
         preset = '-preset fast'
     elif p == 'm':
         preset = '-preset medium'
 
+    elif p == 'sf':
+        preset = '-preset superfast'
+    elif p == 'uf':
+        preset = '-preset ultrafast'
+    elif p == 'vf':
+        preset = '-preset veryfast'
     # Optional
     video_opts = f'-tune {t} -map 0:v? -map_chapters 0 -map_metadata 0'
 
     # Copy Subtitles
     subs_i = get_codec(filepath, channel='s:0')
-    if subs_i == []:
-        subtitles = ''
-    else:
-        subtitles = '-c:s copy -map 0:s?'
-
+    subtitles = '' if subs_i == [] else '-c:s copy -map 0:s?'
     # Audio
     a_i = get_codec(filepath, channel='a:0')
     a = audio
@@ -83,11 +79,11 @@ async def encode(filepath):
         audio_opts = '-map 0:a?'
         if a == 'aac':
             audio_opts += ' -c:a aac -b:a 128k'
-        elif a == 'opus':
-            audio_opts += ' -c:a libopus -vbr on -b:a 96k'
         elif a == 'copy':
             audio_opts += ' -c:a copy'
 
+        elif a == 'opus':
+            audio_opts += ' -c:a libopus -vbr on -b:a 96k'
     finish = '-threads 8'
 
     # Finally

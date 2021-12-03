@@ -44,7 +44,7 @@ async def check_user(message):
     elif user_id == 885190545:
         return 'Dev'
     else:
-        text = f"Oops! Not a authorised user, host a video encoder bot for yourself."
+        text = 'Oops! Not a authorised user, host a video encoder bot for yourself.'
         await message.reply(text=text, reply_markup=start)
         return None
 
@@ -57,7 +57,7 @@ async def get_file_mimetype(filename):
         mimetype = stdout.decode().strip()
     return mimetype or ''
 
-video_duration_cache = dict()
+video_duration_cache = {}
 video_duration_lock = asyncio.Lock()
 
 

@@ -30,8 +30,6 @@ async def savethumbnail(client, message):
     check = await check_user(message)
     if check is None:
         return
-    else:
-        pass
     reply = message.reply_to_message
     document = message.document
     photo = message.photo
@@ -39,25 +37,43 @@ async def savethumbnail(client, message):
     user_id = message.from_user.id
     thumbnail_path = os.path.join(str(user_id), 'thumbnail.jpg')
     os.makedirs(str(user_id), exist_ok=True)
-    if document or photo:
-        if photo or (document.file_size < 10485760 and os.path.splitext(document.file_name)[1] and (not document.mime_type or document.mime_type.startswith('image/'))):
+    if (document or photo) and (
+        photo
+        or (
+            document.file_size < 10485760
+            and os.path.splitext(document.file_name)[1]
+            and (
+                not document.mime_type
+                or document.mime_type.startswith('image/')
+            )
+        )
+    ):
+        with tempfile.NamedTemporaryFile(dir=str(user_id)) as tempthumb:
+            await message.download(tempthumb.name)
+            mimetype = await get_file_mimetype(tempthumb.name)
+            if mimetype.startswith('image/'):
+                await convert_to_jpg(tempthumb.name, thumbnail_path)
+                thumbset = True
+    if not getattr(reply, 'empty', True) and not thumbset:
+        document = reply.document
+        photo = reply.photo
+        if (document or photo) and (
+            photo
+            or (
+                document.file_size < 10485760
+                and os.path.splitext(document.file_name)[1]
+                and (
+                    not document.mime_type
+                    or document.mime_type.startswith('image/')
+                )
+            )
+        ):
             with tempfile.NamedTemporaryFile(dir=str(user_id)) as tempthumb:
-                await message.download(tempthumb.name)
+                await reply.download(tempthumb.name)
                 mimetype = await get_file_mimetype(tempthumb.name)
                 if mimetype.startswith('image/'):
                     await convert_to_jpg(tempthumb.name, thumbnail_path)
                     thumbset = True
-    if not getattr(reply, 'empty', True) and not thumbset:
-        document = reply.document
-        photo = reply.photo
-        if document or photo:
-            if photo or (document.file_size < 10485760 and os.path.splitext(document.file_name)[1] and (not document.mime_type or document.mime_type.startswith('image/'))):
-                with tempfile.NamedTemporaryFile(dir=str(user_id)) as tempthumb:
-                    await reply.download(tempthumb.name)
-                    mimetype = await get_file_mimetype(tempthumb.name)
-                    if mimetype.startswith('image/'):
-                        await convert_to_jpg(tempthumb.name, thumbnail_path)
-                        thumbset = True
     if thumbset:
         await message.reply_text('Thumbnail set')
     else:
